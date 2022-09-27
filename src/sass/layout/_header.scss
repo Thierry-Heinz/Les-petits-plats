@@ -1,0 +1,15 @@
+#site-header {
+  margin-top: 42px;
+  margin-left: $site-margin;
+  margin-right: $site-margin;
+  margin-bottom: 17px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  h1 {
+    margin: 0;
+    padding: 0;
+    color: $primary-red;
+    font-family: "DM Sans", sans-serif;
+  }
+}

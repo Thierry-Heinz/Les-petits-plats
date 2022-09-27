@@ -2,6 +2,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   entry: {
@@ -22,6 +23,10 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.(s(a|c)ss)$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+      },
     ],
   },
   resolve: { extensions: [".js"] },
@@ -39,5 +44,6 @@ module.exports = {
         },
       ],
     }),
+    new MiniCssExtractPlugin(),
   ],
 };

@@ -1,17 +1,12 @@
-/**
-*
-* Sass 7-1 pattern
-*
-**/
-
 @import "utils/variables";
 
+@import "base/functions";
 @import "base/reset";
 
 @import "layout/header";
 @import "layout/main-content";
 
-@import "components/buttons";
+@import "components/tags";
 @import "components/dropdowns";
 @import "components/cards";
 @import "components/inputs";

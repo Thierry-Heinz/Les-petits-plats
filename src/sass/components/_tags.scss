@@ -1,0 +1,28 @@
+.tag {
+  &.ingredients {
+    --background: #{$blue};
+  }
+  &.appliances {
+    --background: #{$green};
+  }
+  &.ustensils {
+    --background: #{$red};
+  }
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  font-family: "Lato", sans-serif;
+  font-size: em(14);
+  font-weight: 700;
+  background-color: var(--background);
+  color: $lightest;
+  border-radius: $border-radius;
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: $lightest;
+    cursor: pointer;
+  }
+}

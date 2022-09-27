@@ -1,0 +1,55 @@
+.card {
+  border-radius: $border-radius;
+  overflow: hidden;
+  height: 100%;
+  .thumb {
+    background-color: $redish-grey;
+    height: 178px;
+  }
+  .infos {
+    padding: 20px;
+    background-color: $grey;
+    min-height: 100%;
+    div {
+      display: flex;
+    }
+
+    .row1 {
+      justify-content: space-between;
+      align-items: center;
+
+      h2 {
+        font-size: em(18);
+        font-weight: 500;
+      }
+
+      .time {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+        span {
+          display: inline-block;
+          width: max-content;
+        }
+      }
+    }
+    .row2 {
+      .ingredients {
+        width: 50%;
+        font-size: em(12);
+      }
+      .description {
+        width: 50%;
+        font-size: em(12);
+        font-family: "Roboto", sans-serif;
+        height: 109px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}

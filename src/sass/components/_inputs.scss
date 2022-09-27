@@ -1,0 +1,28 @@
+#search {
+  label {
+    position: relative;
+    width: 100%;
+  }
+
+  #searchInput {
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: $border-radius;
+    background-color: $grey;
+    border: none;
+    font-family: "Lato", sans-serif;
+    padding: 24px 28px;
+    font-size: em(18);
+    font-weight: 500;
+    outline: $redish-grey;
+  }
+
+  svg {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translate(-50%, -50%);
+    width: 32px;
+    height: 32px;
+  }
+}
