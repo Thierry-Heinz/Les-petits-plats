@@ -1,7 +1,13 @@
+import SearchApiVA from "../api/SearchAPI";
 export default class InputSearch {
-  constructor() {
+  constructor(initialData, sortersArray, maxInputLength) {
+    this.initialData = initialData;
+    this.sortersArray = sortersArray;
     this.id = "searchInput";
     this.$wrapper = document.createElement("input");
+    this.SearchApi = new SearchApiVA(this.initialData, this.sortersArray);
+    this.maxInputLength = maxInputLength;
+    console.log(this.$wrapper);
   }
 
   //Input creation function
@@ -39,5 +45,23 @@ export default class InputSearch {
 
     $label.append($icon, this.$wrapper);
     $searchSection.append($label);
+    this.handleSearchInput();
+  }
+
+  /**
+   *
+   * Utility function
+   *
+   */
+  handleSearchInput() {
+    const that = this;
+    this.$wrapper.addEventListener("input", function (e) {
+      if (e.target.value.length >= that.maxInputLength) {
+        that.callSearch(e.target.value);
+      }
+    });
+  }
+  callSearch(value) {
+    this.SearchApi.search(value);
   }
 }

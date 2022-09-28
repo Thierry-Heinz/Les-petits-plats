@@ -31,8 +31,9 @@ const init = () => {
     "Ustensiles",
     "ustensils"
   );
+  const sortersArray = [ingredientsSorter, appliancesSorter, ustensilsSorter];
 
-  const mainSearch = new InputSearch();
+  const mainSearch = new InputSearch(recipesObj, sortersArray, 3);
   mainSearch.createInputSearch();
 };
 
