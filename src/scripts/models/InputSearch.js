@@ -1,11 +1,11 @@
-import SearchApiVA from "../api/SearchAPI";
+import SearchApiVB from "../api/SearchAPI";
 export default class InputSearch {
   constructor(initialData, sortersArray, maxInputLength) {
     this.initialData = initialData;
     this.sortersArray = sortersArray;
     this.id = "searchInput";
     this.$wrapper = document.createElement("input");
-    this.SearchApi = new SearchApiVA(this.initialData, this.sortersArray);
+    this.SearchApi = new SearchApiVB(this.initialData, this.sortersArray);
     this.maxInputLength = maxInputLength;
     console.log(this.$wrapper);
   }

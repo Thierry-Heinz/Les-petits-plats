@@ -1,4 +1,4 @@
-export default class SearchApiVA {
+export default class SearchApiVB {
   constructor(initialData, sortersArray) {
     this.initialData = initialData;
     this.sortersArray = sortersArray;
