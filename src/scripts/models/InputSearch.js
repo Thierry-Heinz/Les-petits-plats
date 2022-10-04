@@ -1,13 +1,12 @@
 import SearchApiVA from "../api/SearchAPI";
 export default class InputSearch {
-  constructor(initialData, sortersArray, maxInputLength) {
-    this.initialData = initialData;
+  constructor(recipeMethod, sortersArray, maxInputLength) {
     this.sortersArray = sortersArray;
     this.id = "searchInput";
     this.$wrapper = document.createElement("input");
-    this.SearchApi = new SearchApiVA(this.initialData, this.sortersArray);
     this.maxInputLength = maxInputLength;
-    console.log(this.$wrapper);
+    this.recipeMethod = recipeMethod;
+    this.SearchApi = new SearchApiVA(this.recipeMethod, this.sortersArray);
   }
 
   //Input creation function
@@ -57,11 +56,25 @@ export default class InputSearch {
     const that = this;
     this.$wrapper.addEventListener("input", function (e) {
       if (e.target.value.length >= that.maxInputLength) {
-        that.callSearch(e.target.value);
+        const result = that.callSearch(e.target.value);
+        that.sortersArray.forEach((sorter) =>
+          sorter.updateSorterList(e.target.value, result)
+        );
+        that.recipeMethod.updateRecipes(result);
+      }
+      if (e.target.value.length <= that.maxInputLength - 1) {
+        that.recipeMethod.clearRecipes();
+        that.sortersArray.forEach((sorter) =>
+          sorter.updateSorterList("", that.recipeMethod.initialData)
+        );
+        that.recipeMethod.initialData.forEach((data, index) => {
+          const recipe = data.createCard(index);
+          that.recipeMethod.$wrapper.appendChild(recipe);
+        });
       }
     });
   }
   callSearch(value) {
-    this.SearchApi.search(value);
+    return this.SearchApi.search(value);
   }
 }

@@ -5,8 +5,8 @@
  */
 
 export default class SorterMethod {
-  constructor(data) {
-    this.recipesObj = data;
+  constructor(recipeMethod) {
+    this.recipeMethod = recipeMethod;
     this.$sorterWrapper = document.querySelector("#sort");
     this.$tagsWrapper = document.querySelector("#tags");
   }
@@ -25,40 +25,43 @@ export default class SorterMethod {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  // Array Creation function (for the different sorter)
-  createIngredientsArray() {
-    const tempsArr = [];
-    for (let i = 0; i < this.recipesObj.length; i++) {
-      for (let j = 0; j < this.recipesObj[i].ingredients.length; j++) {
-        tempsArr.push(
-          this.capitalizeFirstLetter(
-            this.recipesObj[i].ingredients[j].ingredient
-          )
-        );
-      }
+  createSorterData(type, data) {
+    if (!data) {
+      data = this.recipeMethod.initialData;
     }
-    const ingredientsArr = this.findUnique(tempsArr);
-    return ingredientsArr;
-  }
-  createAppliancesArray() {
     const tempsArr = [];
-    for (let i = 0; i < this.recipesObj.length; i++) {
-      tempsArr.push(this.capitalizeFirstLetter(this.recipesObj[i].appliance));
+    switch (type) {
+      case "ingredients":
+        for (let i = 0; i < data.length; i++) {
+          for (let j = 0; j < data[i].ingredients.length; j++) {
+            tempsArr.push(
+              this.capitalizeFirstLetter(
+                data[i].ingredients[j].ingredient.toLowerCase()
+              )
+            );
+          }
+        }
+        break;
+      case "appliances":
+        for (let i = 0; i < data.length; i++) {
+          tempsArr.push(
+            this.capitalizeFirstLetter(data[i].appliance.toLowerCase())
+          );
+        }
+        break;
+      case "ustensils":
+        for (let i = 0; i < data.length; i++) {
+          for (let j = 0; j < data[i].ustensils.length; j++) {
+            tempsArr.push(
+              this.capitalizeFirstLetter(data[i].ustensils[j].toLowerCase())
+            );
+          }
+        }
+        break;
+      default:
+        break;
     }
-    const appliancesArr = this.findUnique(tempsArr);
-    return appliancesArr;
-  }
-  createUstensilsArray() {
-    const tempsArr = [];
-    for (let i = 0; i < this.recipesObj.length; i++) {
-      for (let j = 0; j < this.recipesObj[i].ustensils.length; j++) {
-        tempsArr.push(
-          this.capitalizeFirstLetter(this.recipesObj[i].ustensils[j])
-        );
-      }
-    }
-    const ustensilsArr = this.findUnique(tempsArr);
-    return ustensilsArr;
+    return this.findUnique(tempsArr);
   }
 
   /**
@@ -133,7 +136,7 @@ export default class SorterMethod {
     $dropdownMenu.setAttribute("tabindex", "-1");
     $dropdownMenu.setAttribute("aria-activedescendant", `option-0-${label}`);
     $dropdownMenu.setAttribute("aria-owns", `option-0-${label}`);
-    $dropdownMenu.setAttribute("aria-roledescription", "Trier les médias");
+    $dropdownMenu.setAttribute("aria-roledescription", `Trier les ${label}`);
     $dropdownMenu.setAttribute("aria-labelledBy", `listbox-label-${label}`);
 
     this.createDropdownItem($dropdownMenu, label, options);
@@ -254,13 +257,13 @@ export default class SorterMethod {
         $dropdownMenu.firstChild.focus();
         $dropdownInput
           .querySelector(".sorter-input")
-          .setAttribute("placeholder", "Rechercher un Ingrédient");
+          .setAttribute("placeholder", `Rechercher un ${title}`);
         this.classList.add("down");
       }
     });
   }
 
-  // Click listener for the dropdown Menu
+  // Tags Handle
   handleClickMenu(label, $dropdownItem, option) {
     $dropdownItem.addEventListener("click", (e) => {
       this.$tagsWrapper.style.display = "flex";

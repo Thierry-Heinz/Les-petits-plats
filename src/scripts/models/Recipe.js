@@ -1,11 +1,14 @@
+import RecipeMethod from "../templates/RecipeMethod";
+
 /**
  *
  * Recipe Model
  *
  */
 
-export default class Recipe {
+export default class Recipe extends RecipeMethod {
   constructor(data, index) {
+    super();
     this.id = data.id;
     this.index = index;
     this.name = data.name;
@@ -68,7 +71,7 @@ export default class Recipe {
     return $time;
   }
 
-  // Recipe cretion function
+  // Recipe creation function
   createCard(index) {
     const $card = document.createElement("article");
     $card.classList.add("card");
@@ -102,6 +105,7 @@ export default class Recipe {
     $footer.append($row1, $row2);
 
     $card.append($header, $footer);
+
     return $card;
   }
 }

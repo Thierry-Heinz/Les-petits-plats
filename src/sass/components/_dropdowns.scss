@@ -33,6 +33,9 @@
       & + .dropdown-menu {
         border-radius: 0 0 $border-radius $border-radius;
       }
+      .sorter-input::placeholder {
+        color: rgba($lightest, 0.25);
+      }
     }
 
     .dropdown-toggle {
@@ -75,6 +78,7 @@
         font-weight: 700;
         outline: none;
         border: var(--background);
+        color: $lightest;
         &::placeholder {
           color: $lightest;
           font-size: em(18);
@@ -124,7 +128,6 @@
       }
 
       .text-holder {
-        width: max-content;
         height: max-content;
         display: inline-block;
         padding-left: $dropdown-padding;
