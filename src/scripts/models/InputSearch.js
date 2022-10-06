@@ -6,7 +6,7 @@ export default class InputSearch {
     this.$wrapper = document.createElement("input");
     this.maxInputLength = maxInputLength;
     this.recipeMethod = recipeMethod;
-    this.SearchApi = new SearchApiVB(this.recipeMethod, this.sortersArray);
+    this.SearchApi = SearchApiVB(this.recipeMethod, this.sortersArray);
   }
 
   //Input creation function
