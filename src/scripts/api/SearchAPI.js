@@ -15,27 +15,16 @@ export default function SearchApiVB(recipeMethod, sortersArray) {
 
     const matchIngredients = [];
     for (let i = 0; i < recipeMethod.initialData.length; i++) {
-      for (let j = 0; j < recipeMethod.initialData[i].ingredients.length; j++) {
-        if (
-          includeString(
-            recipeMethod.initialData[i].ingredients[j].ingredient,
-            inputSearch.toLowerCase()
-          )
-        ) {
-          var matchIngredient =
-            recipeMethod.initialData[i].ingredients[j].ingredient;
-        }
-        if (
-          matchIngredient ==
-          recipeMethod.initialData[i].ingredients[j].ingredient
-        ) {
-          matchIngredients.push(recipeMethod.initialData[i]);
-        }
+      var matchIngredient = filter(
+        recipeMethod.initialData[i].ingredients,
+        inputSearch.toLowerCase(),
+        "ingredient",
+        includeString
+      );
+      if (matchIngredient.length) {
+        matchIngredients.push(recipeMethod.initialData[i]);
       }
     }
-    console.log(matchTitle);
-    console.log(matchDescription);
-    console.log(matchIngredients);
 
     const matchResult = aggregateResults(
       [].concat(matchTitle, matchDescription, matchIngredients)
