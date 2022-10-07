@@ -5,6 +5,7 @@ export default class RecipeMethod {
     this.$wrapper = $wrapper;
     this.$sectionInfo = document.querySelector("#infos");
     this.$textHolder = document.createElement("h3");
+    this.populateRecipes(this.initialData);
   }
   clearRecipes() {
     this.$wrapper.innerHTML = "";
@@ -13,7 +14,6 @@ export default class RecipeMethod {
     this.$textHolder.remove();
   }
   updateRecipes(newData) {
-    console.log(newData);
     // CHeck if newData parameter is an Array
     if (Array.isArray(newData)) {
       // Then if the result from search is empty

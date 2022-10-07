@@ -7,6 +7,10 @@
 }
 #tags {
   gap: 20px;
+  display: none;
+  &.show {
+    display: flex;
+  }
 }
 #sort {
   display: flex;

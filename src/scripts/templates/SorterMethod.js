@@ -1,3 +1,4 @@
+import SearchApi from "../api/SearchAPI";
 /***
  *
  * Sorter
@@ -5,10 +6,19 @@
  */
 
 export default class SorterMethod {
-  constructor(recipeMethod, $sorterSection, $tagSection) {
+  constructor(recipeMethod, $sorterSection, $tagsSection) {
     this.recipeMethod = recipeMethod;
     this.$sorterWrapper = $sorterSection;
-    this.$tagsWrapper = $tagSection;
+    this.$tagsWrapper = $tagsSection;
+    this.SearchApi = new SearchApi(this.recipeMethod);
+    this.tempTagsList = [];
+    this.createSorter(
+      "Ingrédients",
+      "ingredients",
+      this.recipeMethod.initialData
+    );
+    this.createSorter("Appareils", "appliances", this.recipeMethod.initialData);
+    this.createSorter("Ustensiles", "ustensils", this.recipeMethod.initialData);
   }
 
   // Utility function
@@ -145,7 +155,6 @@ export default class SorterMethod {
   }
   //create the input
   createdropdownInput(title, label) {
-    this.$tagsWrapper.style.display = "none";
     const id = `input-${label.toLowerCase()}`;
     const $label = document.createElement("label");
     $label.classList.add("sorter-label-input");
@@ -185,7 +194,8 @@ export default class SorterMethod {
     return $svg;
   }
   // create the sorter
-  createSorter(title, label, options) {
+  createSorter(title, label, data) {
+    const options = this.createSorterData(label, data);
     const $listLabel = document.createElement("h3");
     $listLabel.classList.add("screen-reader");
     $listLabel.innerText = title;
@@ -222,7 +232,7 @@ export default class SorterMethod {
     const $icon = this.createSvgIcon(option, "Supprimer le tag", "close");
     $tag.append($textHolder, $icon);
     this.$tagsWrapper.appendChild($tag);
-    this.handleRemoveTag($tag, $icon);
+    this.handleRemoveTag(label, option, $tag, $icon);
   }
 
   // click listener on the toggle button for the dropdown
@@ -263,20 +273,96 @@ export default class SorterMethod {
     });
   }
 
-  // Tags Handle
+  /**
+   *
+   * Sorter handle
+   *
+   */
+
+  updateSorterList(value, newData) {
+    if (newData == undefined) {
+      this.clearSorter();
+      this.createSorter(
+        "Ingrédients",
+        "ingredients",
+        this.recipeMethod.initialData
+      );
+      this.createSorter(
+        "Appareils",
+        "appliances",
+        this.recipeMethod.initialData
+      );
+      this.createSorter(
+        "Ustensiles",
+        "ustensils",
+        this.recipeMethod.initialData
+      );
+    } else {
+      this.clearSorter();
+      this.createSorter(value, "ingredients", newData);
+      this.createSorter(value, "appliances", newData);
+      this.createSorter(value, "ustensils", newData);
+    }
+
+    //value ? this.updateSorterInput(value) : "";
+  }
+  clearSorter($sorter) {
+    this.$sorterWrapper.innerHTML = "";
+  }
+
+  /**
+   *
+   * Tags Handle
+   *
+   *  */
   handleClickMenu(label, $dropdownItem, option) {
+    const that = this;
     $dropdownItem.addEventListener("click", (e) => {
-      this.$tagsWrapper.style.display = "flex";
-      this.createTag(label, option);
+      console.log($dropdownItem.parentNode);
+      that.$tagsWrapper.classList.add("show");
+      that.tempTagsList.push({ label: label, option: option });
+      that.createTag(label, option);
+      const result = that.callSearch(label, option);
+      console.log(result);
+      that.recipeMethod.updateRecipes(result);
+      that.updateSorterList(option, result);
     });
   }
-  handleRemoveTag($tag, $icon) {
+  handleRemoveTag(label, option, $tag, $icon) {
+    const that = this;
     $icon.addEventListener("click", function () {
       $tag.remove();
-      const $tagsContainer = document.querySelector("#tags");
-      if (!$tagsContainer.hasChildNodes()) {
-        $tagsContainer.style.display = "none";
+      that.tempTagsList = that.tempTagsList.filter(
+        (tag) => tag.option !== option
+      );
+
+      const searchInputText = document.querySelector("#searchInput").value;
+
+      if (searchInputText) {
+        const result = that.callSearch("main", searchInputText);
+        console.log(result);
+        that.recipeMethod.updateRecipes(result);
+        that.updateSorterList(result);
+      } else {
+        if (that.tempTagsList.length == 0) {
+          that.recipeMethod.updateRecipes();
+          that.updateSorterList();
+        }
+      }
+
+      if (that.tempTagsList.length !== 0) {
+        that.tempTagsList.forEach((tag, index, arr) => {
+          const result = that.callSearch(tag.label, tag.option);
+          that.recipeMethod.updateRecipes(result);
+          that.updateSorterList(tag.option, result);
+        });
+      } else {
+        that.$tagsWrapper.classList.remove("show");
       }
     });
+  }
+
+  callSearch(label, value) {
+    return this.SearchApi.search(value, label);
   }
 }

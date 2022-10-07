@@ -1,12 +1,12 @@
-import SearchApiVA from "../api/SearchAPI";
+import SearchApi from "../api/SearchAPI";
 export default class InputSearch {
-  constructor(recipeMethod, sortersArray, maxInputLength) {
-    this.sortersArray = sortersArray;
+  constructor(recipeMethod, sorterMethod, maxInputLength) {
+    this.sorterMethod = sorterMethod;
     this.id = "searchInput";
     this.$wrapper = document.createElement("input");
     this.maxInputLength = maxInputLength;
     this.recipeMethod = recipeMethod;
-    this.SearchApi = new SearchApiVA(this.recipeMethod, this.sortersArray);
+    this.SearchApi = new SearchApi(this.recipeMethod);
   }
 
   //Input creation function
@@ -57,20 +57,16 @@ export default class InputSearch {
     this.$wrapper.addEventListener("input", function (e) {
       if (e.target.value.length >= that.maxInputLength) {
         const result = that.callSearch(e.target.value);
-        that.sortersArray.forEach((sorter) =>
-          sorter.updateSorterList(e.target.value, result)
-        );
+        that.sorterMethod.updateSorterList(e.target.value, result);
         that.recipeMethod.updateRecipes(result);
       }
       if (e.target.value.length <= that.maxInputLength - 1) {
-        that.sortersArray.forEach((sorter) =>
-          sorter.updateSorterList("", that.recipeMethod.initialData)
-        );
+        that.sorterMethod.updateSorterList(e.target.value);
         that.recipeMethod.updateRecipes();
       }
     });
   }
   callSearch(value) {
-    return this.SearchApi.search(value);
+    return this.SearchApi.search(value, "main");
   }
 }
