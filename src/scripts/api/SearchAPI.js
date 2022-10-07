@@ -1,7 +1,6 @@
 export default class SearchApiVA {
-  constructor(recipeMethod, sortersArray) {
+  constructor(recipeMethod) {
     this.recipeMethod = recipeMethod;
-    this.sortersArray = sortersArray;
   }
   search(inputSearch) {
     if (typeof inputSearch == "string") {

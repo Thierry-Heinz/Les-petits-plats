@@ -12,7 +12,6 @@ export default class SingleSorter {
   }
   updateSorterList(value, newData) {
     this.clearSorter();
-    console.log(value);
     const newSorterData = this.sorterMethod.createSorterData(
       this.label,
       newData
@@ -33,5 +32,8 @@ export default class SingleSorter {
     this.$sorter
       .querySelector(".sorter-input")
       .setAttribute("placeholder", `${value}`);
+  }
+  callSearch(value) {
+    return this.SearchApi.search(value);
   }
 }

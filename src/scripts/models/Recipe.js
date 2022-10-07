@@ -1,14 +1,11 @@
-import RecipeMethod from "../templates/RecipeMethod";
-
 /**
  *
  * Recipe Model
  *
  */
 
-export default class Recipe extends RecipeMethod {
+export default class Recipe {
   constructor(data, index) {
-    super();
     this.id = data.id;
     this.index = index;
     this.name = data.name;

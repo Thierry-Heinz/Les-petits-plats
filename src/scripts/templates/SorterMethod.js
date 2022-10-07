@@ -5,10 +5,10 @@
  */
 
 export default class SorterMethod {
-  constructor(recipeMethod) {
+  constructor(recipeMethod, $sorterSection, $tagSection) {
     this.recipeMethod = recipeMethod;
-    this.$sorterWrapper = document.querySelector("#sort");
-    this.$tagsWrapper = document.querySelector("#tags");
+    this.$sorterWrapper = $sorterSection;
+    this.$tagsWrapper = $tagSection;
   }
 
   // Utility function

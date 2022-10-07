@@ -9,16 +9,18 @@ import "../sass/main.scss";
 
 const init = () => {
   const $recipesSection = document.querySelector("#recipes");
+  const $tagSection = document.querySelector("#tags");
+  const $sortersSection = document.querySelector("#sort");
 
-  const recipesObj = recipes.map((recipe, index) => {
-    const recipeObj = new Recipe(recipe, index);
-    $recipesSection.appendChild(recipeObj.createCard(index));
-    return recipeObj;
-  });
-
+  const recipesObj = recipes.map((recipe, index) => new Recipe(recipe, index));
   const recipeMethod = new RecipeMethod(recipesObj, $recipesSection);
+  recipeMethod.populateRecipes(recipesObj);
 
-  const sorterMethod = new SorterMethod(recipeMethod);
+  const sorterMethod = new SorterMethod(
+    recipeMethod,
+    $sortersSection,
+    $tagSection
+  );
 
   const ingredientsSorter = new SingleSorter(
     sorterMethod,
