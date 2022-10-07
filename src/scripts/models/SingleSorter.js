@@ -12,7 +12,6 @@ export default class SingleSorter {
   }
   updateSorterList(value, newData) {
     this.clearSorter();
-    console.log(value);
     const newSorterData = this.sorterMethod.createSorterData(
       this.label,
       newData

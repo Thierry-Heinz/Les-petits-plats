@@ -1,23 +1,33 @@
 export default class RecipeMethod {
   constructor(initialData, $wrapper) {
     this.initialData = initialData;
-    this.tempData;
+    this.tempData = initialData;
     this.$wrapper = $wrapper;
   }
   clearRecipes() {
     this.$wrapper.innerHTML = "";
   }
+
   updateRecipes(newData) {
-    console.log(this.isEqual(newData, this.tempData));
-    if (!this.isEqual(newData, this.tempData)) {
+    if (newData) {
+      if (!this.isEqual(newData, this.tempData)) {
+        this.clearRecipes();
+        newData.forEach((data, index) => {
+          const $newRecipe = data.createCard(index);
+          this.$wrapper.appendChild($newRecipe);
+        });
+      }
+      this.tempData = newData;
+    } else {
       this.clearRecipes();
-      newData.forEach((data, index) => {
+      this.initialData.forEach((data, index) => {
         const $newRecipe = data.createCard(index);
         this.$wrapper.appendChild($newRecipe);
       });
+      this.tempData = this.initialData;
     }
-    this.tempData = newData;
   }
+
   isEqual(newArr, oldArr) {
     if (Array.isArray(oldArr)) {
       if (newArr.length != oldArr.length) {

@@ -63,14 +63,10 @@ export default class InputSearch {
         that.recipeMethod.updateRecipes(result);
       }
       if (e.target.value.length <= that.maxInputLength - 1) {
-        that.recipeMethod.clearRecipes();
+        that.recipeMethod.updateRecipes();
         that.sortersArray.forEach((sorter) =>
           sorter.updateSorterList("", that.recipeMethod.initialData)
         );
-        that.recipeMethod.initialData.forEach((data, index) => {
-          const recipe = data.createCard(index);
-          that.recipeMethod.$wrapper.appendChild(recipe);
-        });
       }
     });
   }

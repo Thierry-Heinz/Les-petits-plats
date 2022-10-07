@@ -265,9 +265,11 @@ export default class SorterMethod {
 
   // Tags Handle
   handleClickMenu(label, $dropdownItem, option) {
+    const that = this;
     $dropdownItem.addEventListener("click", (e) => {
       this.$tagsWrapper.style.display = "flex";
       this.createTag(label, option);
+      console.log(that.recipeMethod.tempData);
     });
   }
   handleRemoveTag($tag, $icon) {

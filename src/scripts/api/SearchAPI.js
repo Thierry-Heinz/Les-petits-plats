@@ -1,4 +1,4 @@
-export default function SearchApiVB(recipeMethod, sortersArray) {
+export default function SearchApiVB(recipeMethod) {
   function search(inputSearch) {
     const matchTitle = filter(
       recipeMethod.initialData,
@@ -29,7 +29,6 @@ export default function SearchApiVB(recipeMethod, sortersArray) {
     const matchResult = aggregateResults(
       [].concat(matchTitle, matchDescription, matchIngredients)
     );
-    console.log(matchResult);
     return matchResult;
   }
 
@@ -44,11 +43,7 @@ export default function SearchApiVB(recipeMethod, sortersArray) {
   }
 
   function includeString(string, value) {
-    if (string.toLowerCase().indexOf(value) !== -1) {
-      return true;
-    } else {
-      return false;
-    }
+    return string.toLowerCase().indexOf(value) !== -1;
   }
 
   function aggregateResults(array) {
