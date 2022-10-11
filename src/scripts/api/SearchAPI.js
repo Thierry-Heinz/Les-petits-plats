@@ -7,6 +7,7 @@ export default class SearchApi {
       inputSearch = inputSearch.toLowerCase();
       if (type == "main") {
         var data = this.recipeMethod.initialData;
+        console.log(inputSearch, data);
         const matchTitle = this.findByTitle(data, inputSearch);
         const matchDescription = this.findByDescription(data, inputSearch);
         const matchIngredients = this.findByIngredients(data, inputSearch);
@@ -19,7 +20,6 @@ export default class SearchApi {
         if (type == "ingredients") {
           console.log("search by ingredients tags");
           var result = this.findByIngredients(data, inputSearch);
-          console.log(result);
         }
         if (type == "appliances") {
           console.log("search by appliances tags");
@@ -48,7 +48,7 @@ export default class SearchApi {
   findByIngredients(data, value) {
     return data.filter((data) => {
       return data.ingredients.find((ingredient) => {
-        return ingredient.ingredient.toLowerCase().includes(value);
+        return this.isExactMatch(ingredient.ingredient.toLowerCase(), value);
       });
     });
   }
@@ -63,5 +63,11 @@ export default class SearchApi {
         return ustensil.toLowerCase().includes(value);
       });
     });
+  }
+  escapeRegExpMatch(s) {
+    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+  }
+  isExactMatch(str, match) {
+    return new RegExp(`\\b${this.escapeRegExpMatch(match)}\\b`).test(str);
   }
 }

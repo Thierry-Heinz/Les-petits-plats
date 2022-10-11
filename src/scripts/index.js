@@ -2,6 +2,7 @@ import { recipes } from "./../assets/data/data";
 import RecipeMethod from "./templates/RecipeMethod";
 import Recipe from "./models/Recipe";
 import SorterMethod from "./templates/SorterMethod";
+import SingleSorter from "./models/SingleSorter";
 import InputSearch from "./models/InputSearch";
 
 import "../sass/main.scss";
@@ -20,7 +21,25 @@ const init = () => {
     $tagsSection
   );
 
-  const mainSearch = new InputSearch(recipeMethod, sorterMethod, 3);
+  const ingredientsSorter = new SingleSorter(
+    sorterMethod,
+    "Ingrédients",
+    "ingredients"
+  );
+  const appliancesSorter = new SingleSorter(
+    sorterMethod,
+    "Appareils",
+    "appliances"
+  );
+  const ustensilsSorter = new SingleSorter(
+    sorterMethod,
+    "Ustensiles",
+    "ustensils"
+  );
+  const sortersArray = [ingredientsSorter, appliancesSorter, ustensilsSorter];
+  sorterMethod.sortersArray = sortersArray;
+
+  const mainSearch = new InputSearch(sorterMethod, 3);
   mainSearch.createInputSearch();
 };
 

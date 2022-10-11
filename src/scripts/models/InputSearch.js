@@ -1,12 +1,9 @@
-import SearchApi from "../api/SearchAPI";
 export default class InputSearch {
-  constructor(recipeMethod, sorterMethod, maxInputLength) {
+  constructor(sorterMethod, maxInputLength) {
     this.sorterMethod = sorterMethod;
     this.id = "searchInput";
     this.$wrapper = document.createElement("input");
     this.maxInputLength = maxInputLength;
-    this.recipeMethod = recipeMethod;
-    this.SearchApi = new SearchApi(this.recipeMethod);
   }
 
   //Input creation function
@@ -56,17 +53,9 @@ export default class InputSearch {
     const that = this;
     this.$wrapper.addEventListener("input", function (e) {
       if (e.target.value.length >= that.maxInputLength) {
-        const result = that.callSearch(e.target.value);
-        that.sorterMethod.updateSorterList(e.target.value, result);
-        that.recipeMethod.updateRecipes(result);
-      }
-      if (e.target.value.length <= that.maxInputLength - 1) {
-        that.sorterMethod.updateSorterList(e.target.value);
-        that.recipeMethod.updateRecipes();
+        console.log("test");
+        that.sorterMethod.updateSortersManager("main", e.target.value);
       }
     });
-  }
-  callSearch(value) {
-    return this.SearchApi.search(value, "main");
   }
 }
