@@ -2,17 +2,20 @@ import SearchApi from "../api/SearchAPI";
 
 /***
  *
- * Sorter
+ * Common Sorters Method
  *
  */
 
 export default class SorterMethod {
   constructor(recipeMethod, $sorterSection, $tagsSection) {
+    // Copy of the recipeMethod (for access to the data)
     this.recipeMethod = recipeMethod;
+    // "State" of the tag selected by user
     this.tempTagsList = [];
-    this.SearchApi = new SearchApi(this.recipeMethod);
     this.$sorterWrapper = $sorterSection;
     this.$tagsWrapper = $tagsSection;
+    //Init of the search Api and give it initialData
+    this.SearchApi = new SearchApi(this.recipeMethod);
   }
 
   // Utility function
@@ -29,6 +32,9 @@ export default class SorterMethod {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+  // Create sorter data (to provide options for the creating of  the sorter)
+  // If no data provided, based on initial data
+  // Based on a given "type"
   createSorterData(type, data) {
     if (!data) {
       data = this.recipeMethod.initialData;
@@ -68,56 +74,61 @@ export default class SorterMethod {
     return this.findUnique(tempsArr);
   }
 
+  // Filter sorterData
+  filterSorterData(option, data) {
+    return data.filter((data) => {
+      return data.toLowerCase().includes(option.toLowerCase());
+    });
+  }
+
   //Manage the different cases of search for the sorters and recipes
   // " The Brain "
-  updateSortersManager(type, option, that) {
+  updateSortersManager(type, option) {
+    //if not type is provided reset all
     if (type == undefined) {
       this.updateAllSorters();
       this.recipeMethod.updateRecipes();
     } else {
+      // update sorters and recipes UI
       const result = this.callSearch(type, option);
-      console.log(result);
       this.updateAllSorters(result, option);
       this.recipeMethod.updateRecipes(result);
     }
 
+    // If a tag has been saved in "state" tempTagList, make a search on each tag in state
     if (this.tempTagsList.length == 0) {
       this.$tagsWrapper.classList.remove("show");
     } else {
       this.tempTagsList.forEach((tag) => {
-        console.log(tag);
         const result = this.callSearch(tag.label, tag.option);
-        console.log(result);
-        this.updateAllSorters(result, tag.option, that);
+        this.updateAllSorters(result, tag.option, tag.label);
         this.recipeMethod.updateRecipes(result);
       });
     }
   }
 
   //Update all the sorters
-  updateAllSorters(newData, option, that) {
-    // console.log(newData, option);
-    this.clearSorters();
+  updateAllSorters(newData, option, tag) {
+    // If no Data provided, reset each sorter in sortsArray (added after instantiation of the object)
     if (newData == undefined) {
       this.sortersArray.forEach((sorter) => {
-        sorter.updateSorter(this.recipeMethod.initialData, option, that);
+        sorter.updateSorter(this.recipeMethod.initialData);
       });
     } else {
       this.sortersArray.forEach((sorter) => {
-        sorter.updateSorter(newData, option, that);
+        sorter.updateSorter(newData, option, tag);
       });
     }
   }
 
-  //
-  updateAllSortersInput(value) {
+  // Close all the dropdown
+  closeAllSortersDropdown() {
     this.sortersArray.forEach((sorter) => {
-      sorter.updateSorterInput(value);
+      sorter.closeDropdown();
     });
   }
-  clearSorters() {
-    this.$sorterWrapper.innerHTML = "";
-  }
+
+  // Call the Search Api
   callSearch(label, value) {
     return this.SearchApi.search(value, label);
   }

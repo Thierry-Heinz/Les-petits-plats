@@ -6,12 +6,23 @@
 
 export default class SingleSorter {
   constructor(sorterMethod, title, label) {
+    //Access to common methods for the sorters
     this.sorterMethod = sorterMethod;
     this.title = title;
     this.label = label;
+
+    // Init. data for each of the sorter menu
     this.initialSorterData = this.sorterMethod.createSorterData(this.label);
+    // Make a copy that will be updated
     this.tempSorterData = this.initialSorterData;
+
     this.$input = document.createElement("input");
+    this.$relativeWrapper = document.createElement("div");
+    this.$icon = this.createSvgIcon(label, "Ouvrir le menu", "angle-down");
+    this.$dropdownWrapper = this.createDropdown(this.title, this.label);
+    this.$dropdownMenu = this.createDropdownMenu(label, this.initialSorterData);
+
+    //Init. and display the sorter at first display
     this.$sorter = this.createSorter(
       this.title,
       this.label,
@@ -43,17 +54,14 @@ export default class SingleSorter {
       "dropdown-el"
     );
     $dropdownToggle.setAttribute("data-value", label);
-
     const $textHolder = document.createElement("span");
     $textHolder.classList.add("text-holder");
     $textHolder.textContent = title;
-
     $dropdownToggle.appendChild($textHolder);
-    //$dropdownToggle.innerHTML += $icon;
-
     return $dropdownToggle;
   }
-  //create list item
+
+  //create each list item based on the options
   createDropdownItem($menu, label, options) {
     options.forEach((option, index) => {
       const $li = document.createElement("li");
@@ -61,19 +69,10 @@ export default class SingleSorter {
       $li.setAttribute("data-value", option.toLowerCase());
       $li.setAttribute("tabindex", "1");
       $li.id = `option-${index}-${label}`;
-
       const $textHolder = document.createElement("span");
       $textHolder.classList.add("text-holder");
       $textHolder.textContent = option;
-
       $li.appendChild($textHolder);
-
-      const $icon = `
-          <svg role="img" class="dropdown-arrow-icon down" aria-labelledby="dropdown-arrow-title-${index}">
-            <title id="dropdown-arrow-title-${index}">Fermer le menu de tri</title>
-            <use xlink:href="#dropdown-arrow" ></use>
-          </svg>     
-    `;
       $menu.appendChild($li);
       this.handleClickMenu(label, $li, option);
     });
@@ -93,13 +92,12 @@ export default class SingleSorter {
     $dropdownMenu.setAttribute("aria-owns", `option-0-${label}`);
     $dropdownMenu.setAttribute("aria-roledescription", `Trier les ${label}`);
     $dropdownMenu.setAttribute("aria-labelledBy", `listbox-label-${label}`);
-
     this.createDropdownItem($dropdownMenu, label, options);
-
     return $dropdownMenu;
   }
-  //create the input
-  createdropdownInput(title, label) {
+
+  //create the input for the dropdown
+  createDropdownInput(title, label) {
     const id = `input-${label.toLowerCase()}`;
     const $label = document.createElement("label");
     $label.classList.add("sorter-label-input");
@@ -109,8 +107,10 @@ export default class SingleSorter {
     this.$input.placeholder = title;
 
     $label.appendChild(this.$input);
+    this.handleSorterInput();
     return $label;
   }
+
   //create svg icon
   createSvgIcon(label, text, href) {
     const id = `${href}-${label.toLowerCase()}`;
@@ -120,52 +120,49 @@ export default class SingleSorter {
       "http://www.w3.org/2000/svg",
       "title"
     );
-
     $svg.setAttribute("role", "img");
     $svg.setAttribute("aria-labelledby", id);
     $svg.classList.add(`${href}-icon`);
-
     $title.id = id;
     $title.innerText = `${text} ${label}`;
-
     $use.setAttributeNS(
       "http://www.w3.org/1999/xlink",
       "xlink:href",
       `#${href}`
     );
-
     $svg.append($title, $use);
     return $svg;
   }
-  // create the sorter
+  // Create the sorter
   createSorter(title, label, options) {
     const $listLabel = document.createElement("h3");
     $listLabel.classList.add("screen-reader");
     $listLabel.innerText = title;
     $listLabel.id = `listbox-label-${label}`;
-
-    const $dropdownWrapper = this.createDropdown(title, label);
-    const $dropdownInput = this.createdropdownInput(title, label);
-    const $dropdownMenu = this.createDropdownMenu(label, options);
-
-    const $relativeWrapper = document.createElement("div");
-    $relativeWrapper.classList.add("dropdown-wrapper", label.toLowerCase());
-    $relativeWrapper.setAttribute("role", "listbox");
-
-    const $icon = this.createSvgIcon(label, "Ouvrir le menu", "angle-down");
-
-    $dropdownWrapper.append($dropdownInput, $icon);
-    $relativeWrapper.append($listLabel, $dropdownWrapper, $dropdownMenu);
-    this.sorterMethod.$sorterWrapper.appendChild($relativeWrapper);
-    this.toggleDropdown(
-      $dropdownWrapper,
-      $dropdownInput,
-      $dropdownMenu,
-      $icon,
-      title
+    const $dropdownInput = this.createDropdownInput(title, label);
+    this.$relativeWrapper.classList.add(
+      "dropdown-wrapper",
+      label.toLowerCase()
     );
-    return $relativeWrapper;
+    this.$relativeWrapper.setAttribute("role", "listbox");
+    // if data provided
+    if (options.length > 0) {
+      this.$dropdownWrapper.append($dropdownInput, this.$icon);
+      this.$relativeWrapper.append(
+        $listLabel,
+        this.$dropdownWrapper,
+        this.$dropdownMenu
+      );
+      this.handleClickDropdown();
+    } else {
+      this.$dropdownWrapper.append($dropdownInput);
+      this.$relativeWrapper.append($listLabel, this.$dropdownWrapper);
+    }
+
+    this.sorterMethod.$sorterWrapper.appendChild(this.$relativeWrapper);
+    return this.$relativeWrapper;
   }
+  // Create the tag (based on the click of the sorter menu)
   createTag(label, option) {
     const $tag = document.createElement("div");
     $tag.classList.add("tag", label);
@@ -177,43 +174,47 @@ export default class SingleSorter {
     this.sorterMethod.$tagsWrapper.appendChild($tag);
     this.handleRemoveTag(label, option, $tag, $icon);
   }
-
-  // click listener on the toggle button for the dropdown
-  toggleDropdown(
-    $dropdownWrapper,
-    $dropdownInput,
-    $dropdownMenu,
-    $icon,
-    title
-  ) {
+  /**
+   *
+   * Handle the dropdown interaction
+   *
+   */
+  // click listener on the toggle button for the dropdown, check if already opened
+  handleClickDropdown() {
     const that = this;
-
-    $icon.addEventListener("click", function (e) {
-      const $dropdowns = document.querySelectorAll(".dropdown");
-      const expanded = $dropdownWrapper.getAttribute("aria-expanded");
+    this.$icon.addEventListener("click", function (e) {
+      const expanded = that.$dropdownWrapper.getAttribute("aria-expanded");
       if (expanded == "true") {
-        $dropdownWrapper.setAttribute("aria-expanded", "false");
-        $dropdownMenu.classList.toggle("show");
-        $dropdownWrapper.style.width = "100%";
-        $dropdownInput
-          .querySelector(".sorter-input")
-          .setAttribute("placeholder", title);
-        this.classList.remove("down");
+        that.sorterMethod.closeAllSortersDropdown();
       } else {
-        $dropdowns.forEach(($dropdown) => {
-          $dropdown.style.width = "100%";
-          $dropdown.nextElementSibling.classList.remove("show");
-        });
-        $dropdownWrapper.setAttribute("aria-expanded", "true");
-        $dropdownMenu.classList.toggle("show");
-        $dropdownWrapper.style.width = `${$dropdownMenu.offsetWidth}px`;
-        $dropdownMenu.firstChild.focus();
-        $dropdownInput
-          .querySelector(".sorter-input")
-          .setAttribute("placeholder", `Rechercher un ${title}`);
-        this.classList.add("down");
+        that.sorterMethod.closeAllSortersDropdown();
+        that.openDropdown("focus");
       }
     });
+  }
+
+  // update UI close corresponding dropdown
+  closeDropdown() {
+    this.$dropdownWrapper.setAttribute("aria-expanded", "false");
+    this.$dropdownMenu.classList.remove("show");
+    this.$dropdownWrapper.style.width = "100%";
+    this.updateSorterInput();
+    this.$icon.classList.remove("down");
+  }
+  // update UI open corresponding dropdown, set focus if trigger by user
+  openDropdown(option) {
+    this.$dropdownWrapper.setAttribute("aria-expanded", "true");
+    this.$dropdownMenu.classList.add("show");
+    this.$dropdownWrapper.style.width = `${this.$dropdownMenu.offsetWidth}px`;
+
+    if (option !== "focus") {
+      this.updateSorterInput(option);
+    } else {
+      this.$dropdownMenu.firstChild.focus();
+      this.updateSorterInput(`Rechercher parmi les ${this.title}`);
+    }
+
+    this.$icon.classList.add("down");
   }
 
   /**
@@ -221,37 +222,42 @@ export default class SingleSorter {
    * Sorter handle
    *
    */
-  // Recreate  sorter
-  updateSorter(newData, option, that) {
-    // console.log(newData);
+  // Recreate each sorter with new Data
+  updateSorter(newData, option, tag) {
     this.tempSorterData = this.sorterMethod.createSorterData(
       this.label,
       newData
     );
-
-    this.$sorter = this.createSorter(
-      this.title,
-      this.label,
-      this.tempSorterData
-    );
-
-    if (that == this) {
-      console.log("YAY! fire input");
-      this.updateSorterInput(option);
+    // if a search value or a tag is provided
+    if (option) {
+      if (!tag) {
+        const filteredData = this.sorterMethod.filterSorterData(
+          option,
+          this.tempSorterData
+        );
+        this.updateDropdownMenu(filteredData, option);
+      } else {
+        this.updateDropdownMenu(this.tempSorterData, option, tag);
+      }
+    } else {
+      this.updateDropdownMenu(this.tempSorterData);
     }
   }
 
+  // Update the input in the dropdown of corresponding sorter
   updateSorterInput(value) {
-    // console.log(value);
-    this.$input.placeholder = value;
+    if (value) {
+      this.$input.placeholder = value;
+    } else {
+      this.$input.placeholder = this.title;
+    }
   }
 
   /**
    *
    * Tags Handle
    *
-   *  */
-
+   **/
   // When user click on a list item in the sorter
   handleClickMenu(label, $dropdownItem, option) {
     const that = this;
@@ -259,25 +265,83 @@ export default class SingleSorter {
       that.sorterMethod.$tagsWrapper.classList.add("show");
       that.sorterMethod.tempTagsList.push({ label: label, option: option });
       that.createTag(label, option);
-      that.sorterMethod.updateSortersManager(label, option, this);
+      that.sorterMethod.updateSortersManager();
     });
   }
 
   // When click on delete icon in a tag
-  handleRemoveTag(label, option, $tag, $icon) {
+  handleRemoveTag(option, $tag, $icon) {
     const that = this;
     $icon.addEventListener("click", function () {
       $tag.remove();
+
+      // remove this tag from tempTagList "state"
       that.sorterMethod.tempTagsList = that.sorterMethod.tempTagsList.filter(
         (tag) => tag.option !== option
       );
-      const searchInputText = document.querySelector("#searchInput").value;
 
+      // check if main search is populated, update the sorters by making a "cycle of search"
+      const searchInputText = document.querySelector("#searchInput").value;
       if (searchInputText) {
         that.sorterMethod.updateSortersManager("main", searchInputText);
       } else {
         that.sorterMethod.updateSortersManager();
       }
     });
+  }
+
+  /**
+   *
+   * Sorter input handle
+   *
+   */
+  // handle user input in sorter dropdown, if = 0 close the dropdown
+  handleSorterInput() {
+    const that = this;
+    this.$input.addEventListener("input", function (e) {
+      if (e.target.value.length > 0) {
+        const filteredData = that.sorterMethod.filterSorterData(
+          e.target.value,
+          that.tempSorterData
+        );
+        that.updateDropdownMenu(filteredData);
+        that.openDropdown();
+      } else {
+        that.closeDropdown();
+      }
+    });
+  }
+
+  // Update the dropdown menu (list) with new Data, open or close depending of user action
+  updateDropdownMenu(data, option, tag) {
+    this.$dropdownMenu.style.display = "none";
+    if (data.length > 0) {
+      this.$dropdownMenu.innerHTML = "";
+      this.$dropdownMenu = this.createDropdownMenu(this.label, data);
+      this.$relativeWrapper.appendChild(this.$dropdownMenu);
+
+      // If a value is provided from search or tag
+      if (option) {
+        if (!tag) {
+          this.openDropdown(option);
+          this.recreateDropDownIcon();
+        }
+      } else {
+        this.sorterMethod.closeAllSortersDropdown();
+        this.recreateDropDownIcon();
+      }
+    } else {
+      // if no sorter data for the search remove the menu list and dropdown icon
+      this.$dropdownMenu.innerHTML = "";
+      this.$icon.remove();
+    }
+  }
+
+  // recreate the toggle icon for reference
+  recreateDropDownIcon() {
+    this.$icon.remove();
+    this.$icon = this.createSvgIcon(this.label, "Ouvrir le menu", "angle-down");
+    this.$dropdownWrapper.appendChild(this.$icon);
+    this.handleClickDropdown();
   }
 }

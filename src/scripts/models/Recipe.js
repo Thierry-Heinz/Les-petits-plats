@@ -17,6 +17,11 @@ export default class Recipe {
     this.ustensils = data.ustensils;
   }
 
+  /**
+   *
+   * Creating the Recipe
+   *
+   */
   createIngredientsList() {
     const $list = document.createElement("ul");
     for (let i = 0; i < this.ingredients.length; i++) {

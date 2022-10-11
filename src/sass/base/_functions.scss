@@ -1,8 +1,15 @@
-$browser-context: 16; // Default
+$browser-context: 16;
 
-// transform pixels to em value for text
 @function em($pixels, $context: $browser-context) {
-  @return calc($pixels / $context) + em;
+  @if (unitless($pixels)) {
+    $pixels: $pixels * 1px;
+  }
+
+  @if (unitless($context)) {
+    $context: $context * 1px;
+  }
+
+  @return calc($pixels / $context) * 1em;
 }
 
 // replace substring with another string
@@ -18,23 +25,4 @@ $browser-context: 16; // Default
       );
   }
   @return $string;
-}
-
-//take a css var and allow to modify lightness
-@function lightness($color, $lightnessMultiplier) {
-  $color: str-replace($color, "var(");
-  $color: str-replace($color, ")");
-  $color-h: var(#{$color + "-h"});
-  $color-s: var(#{$color + "-s"});
-  $color-l: var(#{$color + "-l"});
-  @return hsl($color-h, $color-s, calc(#{$color-l} * #{$lightnessMultiplier}));
-}
-
-@function saturation($color, $saturationMultiplier) {
-  $color: str-replace($color, "var(");
-  $color: str-replace($color, ")");
-  $color-h: var(#{$color + "-h"});
-  $color-s: var(#{$color + "-s"});
-  $color-l: var(#{$color + "-l"});
-  @return hsl($color-h, calc(#{$color-s} * #{$saturationMultiplier}), $color-l);
 }

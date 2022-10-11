@@ -1,6 +1,10 @@
 /*!*************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/sass/main.scss ***!
   \*************************************************************************************************************/
+html {
+  font-size: 16px;
+}
+
 body {
   font-family: "Lato", sans-serif;
   margin: 0;
@@ -80,6 +84,10 @@ svg {
 
 #tags {
   gap: 20px;
+  display: none;
+}
+#tags.show {
+  display: flex;
 }
 
 #sort {
@@ -139,7 +147,6 @@ svg {
 .dropdown-wrapper .dropdown {
   position: relative;
   height: 100%;
-  width: max-content;
 }
 .dropdown-wrapper .dropdown .dropdown-el {
   border-radius: 5px;
@@ -149,11 +156,14 @@ svg {
 .dropdown-wrapper .dropdown[aria-expanded=true] .dropdown-el {
   border-radius: 5px 5px 0 0;
 }
-.dropdown-wrapper .dropdown[aria-expanded=true] .dropdown-el:placeholder {
+.dropdown-wrapper .dropdown[aria-expanded=true] .dropdown-el::placeholder {
   color: rgba(255, 255, 255, 0.5);
 }
 .dropdown-wrapper .dropdown[aria-expanded=true] + .dropdown-menu {
   border-radius: 0 0 5px 5px;
+}
+.dropdown-wrapper .dropdown[aria-expanded=true] .sorter-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
 }
 .dropdown-wrapper .dropdown .dropdown-toggle {
   display: flex;
@@ -194,6 +204,7 @@ svg {
   font-weight: 700;
   outline: none;
   border: var(--background);
+  color: #fff;
 }
 .dropdown-wrapper .dropdown .sorter-label-input .sorter-input::placeholder {
   color: #fff;
@@ -201,11 +212,13 @@ svg {
   font-weight: 700;
 }
 .dropdown-wrapper .dropdown-menu {
+  max-width: 667px;
+  min-width: 100%;
   z-index: 2000;
   font-family: "DM Sans", sans-serif;
   display: none;
-  grid-template-columns: repeat(3, 1fr);
-  width: fit-content;
+  width: max-content;
+  box-sizing: border-box;
   position: absolute;
   list-style: none;
   top: 100%;
@@ -215,32 +228,33 @@ svg {
   flex-direction: column;
   color: #fff;
   font-weight: 700;
-  font-size: 1.125em;
-  border-radius: 5px;
+  border-radius: 0 0 5px 5px;
   background-color: var(--background);
   padding-bottom: 14px;
 }
 .dropdown-wrapper .dropdown-menu.show {
-  display: grid;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 .dropdown-wrapper .dropdown-menu .dropdown-item {
   position: relative;
+  box-sizing: border-box;
   display: flex;
-  width: 100%;
+  width: 33.333%;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  font-size: 1.125em;
-  font-weight: 500;
-  font-family: "Lato", sans-serif;
 }
 .dropdown-wrapper .dropdown-menu .dropdown-item:not(:last-child) {
   padding-bottom: 14px;
 }
 .dropdown-wrapper .dropdown-menu .dropdown-item .text-holder {
-  width: max-content;
+  font-size: 1.125em;
+  font-weight: 500;
+  font-family: "Lato", sans-serif;
   height: max-content;
-  display: inline-block;
+  display: block;
   padding-left: 20px;
   padding-right: 20px;
   padding-top: 10px;

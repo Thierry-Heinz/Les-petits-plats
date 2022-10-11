@@ -5,9 +5,11 @@ export default class SearchApi {
   search(inputSearch, type) {
     if (typeof inputSearch == "string") {
       inputSearch = inputSearch.toLowerCase();
+
+      // Check if call is from "Main search" or by tag click
       if (type == "main") {
+        //Main search always made on initial data set
         var data = this.recipeMethod.initialData;
-        console.log(inputSearch, data);
         const matchTitle = this.findByTitle(data, inputSearch);
         const matchDescription = this.findByDescription(data, inputSearch);
         const matchIngredients = this.findByIngredients(data, inputSearch);
@@ -15,6 +17,7 @@ export default class SearchApi {
           ...new Set([...matchTitle, ...matchDescription, ...matchIngredients]),
         ];
       } else {
+        //tag search made on the result of "Main search"
         var data = this.recipeMethod.tempData;
         console.log(inputSearch, data);
         if (type == "ingredients") {
@@ -31,10 +34,14 @@ export default class SearchApi {
         }
       }
     }
-    console.log(result);
     return result;
   }
 
+  /***
+   *
+   * Private method for seach API by type
+   *
+   */
   findByTitle(data, value) {
     return data.filter((data) => {
       return data.name.toLowerCase().includes(value);

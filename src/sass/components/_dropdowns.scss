@@ -16,7 +16,6 @@
   .dropdown {
     position: relative;
     height: 100%;
-    width: max-content;
 
     .dropdown-el {
       border-radius: $border-radius;
@@ -26,7 +25,7 @@
     &[aria-expanded="true"] {
       .dropdown-el {
         border-radius: $border-radius $border-radius 0 0;
-        &:placeholder {
+        &::placeholder {
           color: rgba($lightest, 0.5);
         }
       }
@@ -89,12 +88,14 @@
   }
 
   .dropdown-menu {
-    max-width: 800px;
+    max-width: 667px;
+    min-width: 100%;
     z-index: 2000;
     font-family: "DM Sans", sans-serif;
     display: none;
-    grid-template-columns: repeat(3, 1fr);
-    width: fit-content;
+    //grid-template-columns: repeat(3, 1fr);
+    width: max-content;
+    box-sizing: border-box;
     position: absolute;
     list-style: none;
     top: 100%;
@@ -104,32 +105,34 @@
     flex-direction: column;
     color: $lightest;
     font-weight: 700;
-    font-size: em(18);
-    border-radius: $border-radius;
+    border-radius: 0 0 $border-radius $border-radius;
     background-color: var(--background);
     padding-bottom: 14px;
 
     &.show {
-      display: grid;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
     }
     .dropdown-item {
       $dropdown-padding: 20px;
       position: relative;
+      box-sizing: border-box;
       display: flex;
-      width: 100%;
+      width: 33.333%;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
-      font-size: em(18);
-      font-weight: 500;
-      font-family: "Lato", sans-serif;
       &:not(:last-child) {
         padding-bottom: 14px;
       }
 
       .text-holder {
+        font-size: em(18, 16);
+        font-weight: 500;
+        font-family: "Lato", sans-serif;
         height: max-content;
-        display: inline-block;
+        display: block;
         padding-left: $dropdown-padding;
         padding-right: $dropdown-padding;
         padding-top: 10px;

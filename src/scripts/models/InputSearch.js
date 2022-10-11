@@ -53,8 +53,10 @@ export default class InputSearch {
     const that = this;
     this.$wrapper.addEventListener("input", function (e) {
       if (e.target.value.length >= that.maxInputLength) {
-        console.log("test");
         that.sorterMethod.updateSortersManager("main", e.target.value);
+      }
+      if (e.target.value.length == 0) {
+        that.sorterMethod.updateSortersManager();
       }
     });
   }
