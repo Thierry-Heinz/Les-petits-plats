@@ -9,19 +9,14 @@ module.exports = {
     index: path.resolve(__dirname, "src") + "/scripts/index.js",
   },
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "dist") + "/",
   },
   module: {
     rules: [
       {
         test: /\.js$/,
-        exclude: /(node_modules)/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: ["@babel/preset-env"],
-          },
-        },
+        exclude: /node_modules/,
+        use: ["babel-loader"],
       },
       {
         test: /\.(s(a|c)ss)$/,
