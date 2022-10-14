@@ -51,9 +51,9 @@ export default class RecipeMethod {
           this.clearInfos();
           this.populateRecipes(newData);
         }
-        //replace the tempData with new data set (for tag search)
-        this.tempData = newData;
       }
+      //replace the tempData with new data set (for tag search)
+      this.tempData = newData;
     }
   }
 

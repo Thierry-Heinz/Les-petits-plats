@@ -19,17 +19,13 @@ export default class SearchApi {
       } else {
         //tag search made on the result of "Main search"
         var data = this.recipeMethod.tempData;
-        console.log(inputSearch, data);
         if (type == "ingredients") {
-          console.log("search by ingredients tags");
           var result = this.findByIngredients(data, inputSearch);
         }
         if (type == "appliances") {
-          console.log("search by appliances tags");
           var result = this.findByAppliances(data, inputSearch);
         }
         if (type == "ustensils") {
-          console.log("search by ustensils tags");
           var result = this.findByUstensils(data, inputSearch);
         }
       }

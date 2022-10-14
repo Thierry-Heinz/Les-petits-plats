@@ -92,6 +92,9 @@ export default class SingleSorter {
     $dropdownMenu.setAttribute("aria-owns", `option-0-${label}`);
     $dropdownMenu.setAttribute("aria-roledescription", `Trier les ${label}`);
     $dropdownMenu.setAttribute("aria-labelledBy", `listbox-label-${label}`);
+    if (options == undefined) {
+      var options = this.initialSorterData;
+    }
     this.createDropdownItem($dropdownMenu, label, options);
     return $dropdownMenu;
   }
@@ -172,7 +175,7 @@ export default class SingleSorter {
     const $icon = this.createSvgIcon(option, "Supprimer le tag", "close");
     $tag.append($textHolder, $icon);
     this.sorterMethod.$tagsWrapper.appendChild($tag);
-    this.handleRemoveTag(label, option, $tag, $icon);
+    this.handleRemoveTag(option, $tag, $icon);
   }
   /**
    *
@@ -185,7 +188,7 @@ export default class SingleSorter {
     this.$icon.addEventListener("click", function (e) {
       const expanded = that.$dropdownWrapper.getAttribute("aria-expanded");
       if (expanded == "true") {
-        that.sorterMethod.closeAllSortersDropdown();
+        that.closeDropdown();
       } else {
         that.sorterMethod.closeAllSortersDropdown();
         that.openDropdown("focus");
@@ -223,22 +226,14 @@ export default class SingleSorter {
    *
    */
   // Recreate each sorter with new Data
-  updateSorter(newData, option, tag) {
+  updateSorter(newData, option) {
     this.tempSorterData = this.sorterMethod.createSorterData(
       this.label,
       newData
     );
     // if a search value or a tag is provided
     if (option) {
-      if (!tag) {
-        const filteredData = this.sorterMethod.filterSorterData(
-          option,
-          this.tempSorterData
-        );
-        this.updateDropdownMenu(filteredData, option);
-      } else {
-        this.updateDropdownMenu(this.tempSorterData, option, tag);
-      }
+      this.updateDropdownMenu(this.tempSorterData, option);
     } else {
       this.updateDropdownMenu(this.tempSorterData);
     }
@@ -265,7 +260,7 @@ export default class SingleSorter {
       that.sorterMethod.$tagsWrapper.classList.add("show");
       that.sorterMethod.tempTagsList.push({ label: label, option: option });
       that.createTag(label, option);
-      that.sorterMethod.updateSortersManager();
+      that.sorterMethod.updateSortersManager(label, option);
     });
   }
 
@@ -307,13 +302,14 @@ export default class SingleSorter {
         that.updateDropdownMenu(filteredData);
         that.openDropdown();
       } else {
+        that.updateDropdownMenu(that.initialSorterData);
         that.closeDropdown();
       }
     });
   }
 
   // Update the dropdown menu (list) with new Data, open or close depending of user action
-  updateDropdownMenu(data, option, tag) {
+  updateDropdownMenu(data, option) {
     this.$dropdownMenu.style.display = "none";
     if (data.length > 0) {
       this.$dropdownMenu.innerHTML = "";
@@ -322,10 +318,8 @@ export default class SingleSorter {
 
       // If a value is provided from search or tag
       if (option) {
-        if (!tag) {
-          this.openDropdown(option);
-          this.recreateDropDownIcon();
-        }
+        this.openDropdown(option);
+        this.recreateDropDownIcon();
       } else {
         this.sorterMethod.closeAllSortersDropdown();
         this.recreateDropDownIcon();

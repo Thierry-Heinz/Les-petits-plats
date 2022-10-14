@@ -89,34 +89,36 @@ export default class SorterMethod {
       this.updateAllSorters();
       this.recipeMethod.updateRecipes();
     } else {
-      // update sorters and recipes UI
-      const result = this.callSearch(type, option);
-      this.updateAllSorters(result, option);
-      this.recipeMethod.updateRecipes(result);
-    }
-
-    // If a tag has been saved in "state" tempTagList, make a search on each tag in state
-    if (this.tempTagsList.length == 0) {
-      this.$tagsWrapper.classList.remove("show");
-    } else {
-      this.tempTagsList.forEach((tag) => {
-        const result = this.callSearch(tag.label, tag.option);
-        this.updateAllSorters(result, tag.option, tag.label);
+      if (type == "main") {
+        // update sorters and recipes UI
+        const result = this.callSearch(type, option);
+        this.updateAllSorters(result, option);
         this.recipeMethod.updateRecipes(result);
-      });
+      } else {
+        // If a tag has been saved in "state" tempTagList, make a search on each tag in state
+        if (this.tempTagsList.length == 0) {
+          this.$tagsWrapper.classList.remove("show");
+        } else {
+          this.tempTagsList.forEach((tag) => {
+            const result = this.callSearch(tag.label, tag.option);
+            this.updateAllSorters(result, tag.option);
+            this.recipeMethod.updateRecipes(result);
+          });
+        }
+      }
     }
   }
 
   //Update all the sorters
-  updateAllSorters(newData, option, tag) {
-    // If no Data provided, reset each sorter in sortsArray (added after instantiation of the object)
+  updateAllSorters(newData, option) {
+    // If no Data provided, reset each sorter in sortersArray (given to this class after instantiation of the object in index.js)
     if (newData == undefined) {
       this.sortersArray.forEach((sorter) => {
         sorter.updateSorter(this.recipeMethod.initialData);
       });
     } else {
       this.sortersArray.forEach((sorter) => {
-        sorter.updateSorter(newData, option, tag);
+        sorter.updateSorter(newData, option);
       });
     }
   }
