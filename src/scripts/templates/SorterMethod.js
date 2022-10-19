@@ -71,7 +71,7 @@ export default class SorterMethod {
       default:
         break;
     }
-    return this.findUnique(tempsArr);
+    return this.findUnique(tempsArr).sort();
   }
 
   // Filter sorterData
@@ -83,42 +83,44 @@ export default class SorterMethod {
 
   //Manage the different cases of search for the sorters and recipes
   // " The Brain "
-  updateSortersManager(type, option) {
-    //if not type is provided reset all
+  updateSortersManager(type, option, that) {
+    //if not type is provided reset the sorters
     if (type == undefined) {
       this.updateAllSorters();
       this.recipeMethod.updateRecipes();
-    } else {
-      if (type == "main") {
-        // update sorters and recipes UI
-        const result = this.callSearch(type, option);
-        this.updateAllSorters(result, option);
+    }
+
+    // If it's a main search
+    if (type == "main") {
+      // update sorters and recipes UI
+      const result = this.callSearch(type, option);
+      this.updateAllSorters(result, option);
+      this.recipeMethod.updateRecipes(result);
+    }
+
+    // If it's a tag search, and a tag has been saved in "state" tempTagList, make a search on each tag in state
+    if (this.tempTagsList.length > 0) {
+      this.tempTagsList.forEach((tag) => {
+        const result = this.callSearch(tag.label, tag.option);
+        this.updateAllSorters(result, tag.option, that);
         this.recipeMethod.updateRecipes(result);
-      } else {
-        // If a tag has been saved in "state" tempTagList, make a search on each tag in state
-        if (this.tempTagsList.length == 0) {
-          this.$tagsWrapper.classList.remove("show");
-        } else {
-          this.tempTagsList.forEach((tag) => {
-            const result = this.callSearch(tag.label, tag.option);
-            this.updateAllSorters(result, tag.option);
-            this.recipeMethod.updateRecipes(result);
-          });
-        }
-      }
+      });
+    } else {
+      this.$tagsWrapper.classList.remove("show");
     }
   }
 
   //Update all the sorters
-  updateAllSorters(newData, option) {
+  updateAllSorters(newData, option, that) {
     // If no Data provided, reset each sorter in sortersArray (given to this class after instantiation of the object in index.js)
     if (newData == undefined) {
       this.sortersArray.forEach((sorter) => {
         sorter.updateSorter(this.recipeMethod.initialData);
+        sorter.updateSorterInput();
       });
     } else {
       this.sortersArray.forEach((sorter) => {
-        sorter.updateSorter(newData, option);
+        sorter.updateSorter(newData, option, that);
       });
     }
   }
@@ -127,6 +129,7 @@ export default class SorterMethod {
   closeAllSortersDropdown() {
     this.sortersArray.forEach((sorter) => {
       sorter.closeDropdown();
+      sorter.updateSorterInput();
     });
   }
 

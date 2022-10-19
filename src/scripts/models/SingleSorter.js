@@ -201,7 +201,6 @@ export default class SingleSorter {
     this.$dropdownWrapper.setAttribute("aria-expanded", "false");
     this.$dropdownMenu.classList.remove("show");
     this.$dropdownWrapper.style.width = "100%";
-    this.updateSorterInput();
     this.$icon.classList.remove("down");
   }
   // update UI open corresponding dropdown, set focus if trigger by user
@@ -216,7 +215,6 @@ export default class SingleSorter {
       this.$dropdownMenu.firstChild.focus();
       this.updateSorterInput(`Rechercher parmi les ${this.title}`);
     }
-
     this.$icon.classList.add("down");
   }
 
@@ -226,14 +224,24 @@ export default class SingleSorter {
    *
    */
   // Recreate each sorter with new Data
-  updateSorter(newData, option) {
+  updateSorter(newData, option, that) {
+    console.log(newData);
     this.tempSorterData = this.sorterMethod.createSorterData(
       this.label,
       newData
     );
+
+    console.log(option);
     // if a search value or a tag is provided
     if (option) {
-      this.updateDropdownMenu(this.tempSorterData, option);
+      const filteredData = this.sorterMethod.filterSorterData(
+        option,
+        this.tempSorterData
+      );
+      if (filteredData.length > 0) {
+        that = this;
+      }
+      this.updateDropdownMenu(this.tempSorterData, option, that);
     } else {
       this.updateDropdownMenu(this.tempSorterData);
     }
@@ -243,8 +251,6 @@ export default class SingleSorter {
   updateSorterInput(value) {
     if (value) {
       this.$input.placeholder = value;
-    } else {
-      this.$input.placeholder = this.title;
     }
   }
 
@@ -260,7 +266,7 @@ export default class SingleSorter {
       that.sorterMethod.$tagsWrapper.classList.add("show");
       that.sorterMethod.tempTagsList.push({ label: label, option: option });
       that.createTag(label, option);
-      that.sorterMethod.updateSortersManager(label, option);
+      that.sorterMethod.updateSortersManager(label, option, that);
     });
   }
 
@@ -269,14 +275,13 @@ export default class SingleSorter {
     const that = this;
     $icon.addEventListener("click", function () {
       $tag.remove();
-
       // remove this tag from tempTagList "state"
       that.sorterMethod.tempTagsList = that.sorterMethod.tempTagsList.filter(
         (tag) => tag.option !== option
       );
-
       // check if main search is populated, update the sorters by making a "cycle of search"
       const searchInputText = document.querySelector("#searchInput").value;
+      console.log(searchInputText);
       if (searchInputText) {
         that.sorterMethod.updateSortersManager("main", searchInputText);
       } else {
@@ -309,25 +314,36 @@ export default class SingleSorter {
   }
 
   // Update the dropdown menu (list) with new Data, open or close depending of user action
-  updateDropdownMenu(data, option) {
+  updateDropdownMenu(data, option, that) {
     this.$dropdownMenu.style.display = "none";
     if (data.length > 0) {
       this.$dropdownMenu.innerHTML = "";
       this.$dropdownMenu = this.createDropdownMenu(this.label, data);
       this.$relativeWrapper.appendChild(this.$dropdownMenu);
 
+      console.log(option);
+
       // If a value is provided from search or tag
       if (option) {
-        this.openDropdown(option);
-        this.recreateDropDownIcon();
+        if (this == that) {
+          this.recreateDropDownIcon();
+          this.openDropdown(option);
+        } else {
+          this.recreateDropDownIcon();
+          this.closeDropdown();
+        }
       } else {
-        this.sorterMethod.closeAllSortersDropdown();
+        this.closeDropdown();
+        this.updateSorterInput(this.title);
         this.recreateDropDownIcon();
       }
     } else {
       // if no sorter data for the search remove the menu list and dropdown icon
       this.$dropdownMenu.innerHTML = "";
       this.$icon.remove();
+      this.closeDropdown();
+
+      this.updateSorterInput(this.title);
     }
   }
 
