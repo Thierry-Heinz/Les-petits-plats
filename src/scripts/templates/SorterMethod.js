@@ -116,7 +116,6 @@ export default class SorterMethod {
     if (newData == undefined) {
       this.sortersArray.forEach((sorter) => {
         sorter.updateSorter(this.recipeMethod.initialData);
-        sorter.updateSorterInput();
       });
     } else {
       this.sortersArray.forEach((sorter) => {
