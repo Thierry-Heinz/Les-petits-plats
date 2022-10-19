@@ -6,7 +6,7 @@ dist for production
 
 dist for development
 
-- npm run watch
+- npm run dev
 
 project available at
 https://studioklatz.com/oc/Lespetitsplats/index.html
