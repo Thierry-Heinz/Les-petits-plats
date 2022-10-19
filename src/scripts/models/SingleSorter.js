@@ -230,8 +230,6 @@ export default class SingleSorter {
       this.label,
       newData
     );
-
-    console.log(option);
     // if a search value or a tag is provided
     if (option) {
       const filteredData = this.sorterMethod.filterSorterData(
@@ -246,7 +244,6 @@ export default class SingleSorter {
       this.updateDropdownMenu(this.tempSorterData);
     }
   }
-
   // Update the input in the dropdown of corresponding sorter
   updateSorterInput(value) {
     if (value) {
@@ -320,8 +317,6 @@ export default class SingleSorter {
       this.$dropdownMenu.innerHTML = "";
       this.$dropdownMenu = this.createDropdownMenu(this.label, data);
       this.$relativeWrapper.appendChild(this.$dropdownMenu);
-
-      console.log(option);
 
       // If a value is provided from search or tag
       if (option) {
